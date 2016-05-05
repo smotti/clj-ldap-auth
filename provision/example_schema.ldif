@@ -1,0 +1,30 @@
+dn: cn=example,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: example
+olcAttributeTypes: ( 1.3.6.1.4.1.47696.1.1 
+ NAME 'username' 
+ DESC 'Username that is used to authenticate an individual' 
+ SUP userid ) 
+olcAttributeTypes: ( 1.3.6.1.4.1.47696.1.5 
+ NAME 'password' 
+ DESC 'The password used to authenticate the user' 
+ SUP userPassword ) 
+olcAttributeTypes: ( 1.3.6.1.4.1.47696.1.6 
+ NAME 'firstName' 
+ DESC 'The first/given name of a person' 
+ SUP gn ) 
+olcAttributeTypes: ( 1.3.6.1.4.1.47696.1.7 
+ NAME 'lastName' 
+ DESC 'The last/sure name of a person' 
+ SUP sn ) 
+olcAttributeTypes: ( 1.3.6.1.4.1.47696.1.8 
+ NAME 'fullName' 
+ DESC 'The full name of a person including first, middle and last name'
+ SUP cn ) 
+olcObjectClasses: ( 1.3.6.1.4.1.47696.3.2 
+ NAME 'userAccount' 
+ DESC 'A user account used to authenticate an individual with the SensableCare system' 
+ SUP top 
+ STRUCTURAL 
+ MAY ( email $ lastName $ firstName $ fullName ) 
+ MUST ( username $ password ) ) 

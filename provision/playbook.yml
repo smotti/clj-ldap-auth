@@ -1,0 +1,59 @@
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+  sudo: true
+  tasks:
+    - name: Update apt package cache
+      apt: update_cache=yes
+
+    # LDAP Server setup as by the following tut:
+    # https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-a-basic-ldap-server-on-an-ubuntu-12-04-vps
+    #
+    # We need to set the root password for slapd before installation.
+    # http://openstack.prov12n.com/quiet-or-unattended-installing-openldap-on-ubuntu-14-04/
+    # NOTE: Don't know if order is important
+    - name: Pre-seed OpenLDAP admin password
+      debconf:
+        name: slapd
+        selection: "{{ item.selection }}"
+        vtype: "{{ item.type }}"
+        value: "{{ item.value }}"
+      with_items:
+        - { selection: "slapd/domain", type: "string", value: "example.com" }
+        - { selection: "slapd/internal/generated_adminpw", type: "password", value: "example" }
+        - { selection: "slapd/password2", type: "password", value: "example" }
+        - { selection: "slapd/internal/adminpw", type: "password", value: "example" }
+        - { selection: "slapd/password1", type: "password", value: "example" }
+        - { selection: "shared/organization", type: "string", value: "example" }
+
+    - name: Install OpenLDAP and phpLDAPadmin
+      apt:
+        install_recommends: no
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - slapd
+        - ldap-utils
+        - phpldapadmin
+
+    - name: Add example schema
+      command: ldapadd -Y EXTERNAL -H ldapi:/// -f /vagrant/provision/example_schema.ldif
+
+    - name: Add a set of default sc accounts, roles and hospital units
+      command: ldapadd -x -w example -H ldapi:/// -D cn=admin,dc=example,dc=com -f /vagrant/provision/default_ldap_entries.ldif
+
+    - name: Copy PHPLDAPAdmin config.php
+      copy:
+        dest: /etc/phpldapadmin/config.php
+        group: www-data
+        mode: 0640
+        owner: root
+        src: /vagrant/provision/config.php
+
+    - name: PHPLDAPAdmin UI
+      debug:
+        msg: "URL: http://localhost:8888/phpldapadmin"
+
+    - name: PHPLDAPAdmin UI Login
+      debug:
+        msg: "Login DN: cn=admin,dc=example,dc=com Password: example"
