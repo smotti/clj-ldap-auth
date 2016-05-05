@@ -1,8 +1,15 @@
-[![Build Status](https://buildhive.cloudbees.com/job/realestate-com-au/job/clj-ldap-auth/badge/icon)](https://buildhive.cloudbees.com/job/realestate-com-au/job/clj-ldap-auth/)
-
 # clj-ldap-auth
 
 A library that provides authentication via an LDAP server
+
+**NOTE THAT THIS FORK IS QUITE DIFFERENT COMPARED TO THE ORIGIN:**
+
+* Use clojure.test instead of midje
+* Remove build.sh
+* Don't use System/getProperty but instead let user define within code
+* Be able to specify filter for user search
+* Bump clojure and unboundid ldapsdk version
+* Provide a Vagrantfile to setup a VM with OpenLDAP for dev & testing
 
 ## Installation
 
