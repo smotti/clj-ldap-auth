@@ -1,28 +1,28 @@
-dn: ou=users,dc=medicustek,dc=com
+dn: ou=users,dc=example,dc=com
 objectclass: organizationalUnit
 ou: users
 description: Users of the system
 
 ## Accounts, password == username
-dn: username=jniles,ou=users,dc=medicustek,dc=com
+dn: username=jniles,ou=users,dc=example,dc=com
 objectclass: userAccount
 firstName: Judd
 lastName: Niles
 password: {SSHA}zVJWFCzVKuUZbzCPgCh8v05yyPlhprHa
 
-dn: username=cdonaldson,ou=users,dc=medicustek,dc=com
+dn: username=cdonaldson,ou=users,dc=example,dc=com
 objectclass: userAccount
 firstName: Caden
 lastName: Donaldson
 password: {SSHA}ibAD54osuuOWsJoWHFLG/pYhgpMeRxnV
 
-dn: username=dlow,ou=users,dc=medicustek,dc=com
+dn: username=dlow,ou=users,dc=example,dc=com
 objectclass: sensableCareUserAccount
 firstName: Donald
 lastName: Low
 password: {SSHA}6vao0kA5yepTDIVB/v0hFmCF4TS5nCKR
 
-dn: username=tjordan,ou=users,dc=medicustek,dc=com
+dn: username=tjordan,ou=users,dc=example,dc=com
 objectclass: sensableCareUserAccount
 firstName: Tristin
 lastName: Jordan
