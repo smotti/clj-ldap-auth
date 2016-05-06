@@ -2,27 +2,22 @@
 
 A library that provides authentication via an LDAP server
 
-**NOTE THAT THIS FORK IS QUITE DIFFERENT COMPARED TO THE ORIGIN:**
-
-* Use clojure.test instead of midje
-* Remove build.sh
-* Don't use System/getProperty but instead let user define within code
-* Be able to specify filter for user search
-* Bump clojure and unboundid ldapsdk version
-* Provide a Vagrantfile to setup a VM with OpenLDAP for dev & testing
-
 ## Installation
 
 Add the following dependency to your `project.clj` file:
 
-    [clj-ldap-auth "0.1.1"]
+    [clj-ldap-auth "0.2.0"]
 
 ## Example
 
 ```clojure
 (require '[clj-ldap-auth.ldap :as ldap])
 
-(if (ldap/bind? username password)
+(def config {:host "localhost" :port 389 :ssl? false
+	     :bind-dn "cn=admin,dc=example,dc=com" :bind-pw "example"
+	     :base-dn "ou=users,dc=example,dc=com"})
+
+(if (ldap/bind? username password config)
   (do something-great)
   (unauthorised))
 ```
@@ -32,50 +27,50 @@ the reason for any authentication failure (or exception):
 
 ```clojure
 (let [reason (atom nil)]
-  (if (ldap/bind? username password #(reset! reason %1))
+  (if (ldap/bind? username password config #(reset! reason %1))
     (do something-great)
     (unauthorised @reason)))
 ```
 
-Then start your app with the appropriate system properties set:
+Then start your app:
 
 ```
-java -Dauth.hostname=ldap.mydomain.com \
-     -Dauth.basedn=dc=mydomain,dc=com \
-     my.program
+java my.program
 ```
 
 ### Configuration
 
-All relevant configuration properties can be set via system properties
-(i.e. `java -D...`). The following parameters are required:
+All relevant configuration properties must be provided by the client code:
 
- * `auth.hostname` - The hostname of your LDAP server.
+ * `host` - The hostname of your LDAP server.
 
- * `auth.basedn` - The base DN in which to search for user ids.
+ * `base-dn` - The base DN in which to search for user ids.
 
 The following parameters are optional:
 
- * `auth.port` - The port on which to connect to the LDAP server. Defaults to `636`.
+ * `port` - The port on which to connect to the LDAP server. Defaults to `636`.
 
- * `auth.ssl` - Should the connection to the LDAP server use SSL. Defaults to `true`.
+ * `ssl` - Should the connection to the LDAP server use SSL. Defaults to `true`.
 
- * `auth.binddn` - The DN with which to bind to the LDAP server to look up usernames.
+ * `bind-dn` - The DN with which to bind to the LDAP server to look up usernames.
 
- * `auth.bindpw` - The password for the `binddn`.
+ * `bind-pw` - The password for the `binddn`.
 
 
 ## Documentation
 
-* [API docs](http://realestate-com-au.github.io/clj-ldap-auth/)
-
-
-## Bugs
-
- * Username search field is not configurable (hard coded to `uid`)
-
+TODO
 
 ## History
+
+### 0.2.0
+
+* Use clojure.test instead of midje
+* Remove build.sh
+* Don't use System/getProperty but instead let user define within code
+* Be able to specify filter for user search
+* Bump clojure and unboundid ldapsdk version
+* Provide a Vagrantfile to setup a VM with OpenLDAP for dev & testing
 
 ### 0.1.1
 
