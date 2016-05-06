@@ -1,17 +1,11 @@
 (ns clj-ldap-auth.ldap
-  (:import
-   com.unboundid.ldap.sdk.LDAPConnection
-   com.unboundid.ldap.sdk.LDAPException
-   com.unboundid.ldap.sdk.SearchScope
-   com.unboundid.util.ssl.SSLUtil
-   com.unboundid.util.ssl.TrustAllTrustManager))
-
-(def config {:host (System/getProperty "auth.hostname")
-             :port (Integer/parseInt (System/getProperty "auth.port" "636"))
-             :ssl? (Boolean/parseBoolean (System/getProperty "auth.ssl" "true"))
-             :bind-dn (System/getProperty "auth.binddn")
-             :bind-pw (System/getProperty "auth.bindpw")
-             :base-dn (System/getProperty "auth.basedn")})
+  (:import [com.unboundid.ldap.sdk
+            LDAPConnection
+            LDAPException
+            SearchScope]
+           [com.unboundid.util.ssl
+            SSLUtil
+            TrustAllTrustManager]))
 
 (def ssl-socket-factory (.createSSLSocketFactory (SSLUtil. (TrustAllTrustManager.))))
 
