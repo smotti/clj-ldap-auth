@@ -13,10 +13,10 @@
   "Returns an authenticated connection to the LDAP server"
   [{:keys [host port ssl? bind-dn bind-pw]}]
   (let [connection (LDAPConnection.)]
-    (if ssl?
+    (when ssl?
       (.setSocketFactory connection ssl-socket-factory))
     (.connect connection host port)
-    (if (not (nil? bind-dn))
+    (when (not (nil? bind-dn))
       (.bind connection bind-dn bind-pw))
     connection))
 
