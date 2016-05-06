@@ -20,11 +20,6 @@
       (.bind connection bind-dn bind-pw))
     connection))
 
-(defn uid-filter
-  "Constructs an LDAP search filter for username"
-  [username]
-  (str "(uid=" username ")"))
-
 (defn- results-empty?
   "Are there any results?"
   [results]
@@ -48,8 +43,9 @@
 
 (defn- search
   "Search for username using the supplied connection to the LDAP server"
-  [connection username]
-  (.search connection (:base-dn config) SearchScope/SUB (uid-filter username) nil))
+  [connection username base-dn user-filter]
+  (let [user-filter (str "(" user-filter username ")")]
+    (.search connection base-dn SearchScope/SUB user-filter nil)))
 
 (defn fail
   [sink message]
@@ -58,7 +54,7 @@
     false))
 
 (defn- try-bind
-  [username password sink]
+  [username password config sink]
   (try
     (connect (assoc config :bind-dn username :bind-pw password))
     true
@@ -75,17 +71,17 @@
    called with the reason for the failure, e.g:
 
      (bind? username password #(println (str \"Error: \" %1)))"
-  ([username password]
-     (bind? username password (fn [message])))
-  ([username password sink]
+  ([username password config]
+     (bind? username password config (fn [message] (println message))))
+  ([username password config sink]
      (let [fail (partial fail sink)]
        (try
          (let [connection (connect config)
-               results (search connection username)]
+               results (search connection username (:base-dn config) (:filter config))]
            (if (results-empty? results)
              (fail (str "username '" username "' not found"))
              (if-let [dn (dn (first-result results))]
-               (try-bind dn password sink)
+               (try-bind dn password config sink)
                (fail (str "Could not find a DN for username '" username "'")))))
          (catch Throwable e
            (fail (str "Error connecting to LDAP server '" (:host config) "': " (.getMessage e))))))))
