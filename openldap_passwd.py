@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 """
 Modified version of https://gist.github.com/rca/7217540
 
